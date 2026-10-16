@@ -15,32 +15,69 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get project files
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Java
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Find Android project
+      - name: Prepare web application
         shell: bash
         run: |
-          if [ -f "gradlew" ]; then
-            echo "PROJECT_DIR=." >> "$GITHUB_ENV"
-          elif [ -f "android/gradlew" ]; then
-            echo "PROJECT_DIR=android" >> "$GITHUB_ENV"
-          else
-            echo "ERROR: Android Gradle project not found."
-            echo "A web-only project needs Android setup first."
+          set -e
+          mkdir -p build-wrapper/www
+
+          rsync -a ./ build-wrapper/www/ \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            --exclude='build-wrapper/' \
+            --exclude='android/' \
+            --exclude='dist/' \
+            --exclude='package.json' \
+            --exclude='package-lock.json'
+
+          if [ ! -f build-wrapper/www/index.html ]; then
+            echo "ERROR: index.html was not found."
             exit 1
           fi
 
-      - name: Build Debug APK
-        shell: bash
+      - name: Install Capacitor
+        working-directory: build-wrapper
         run: |
-          cd "$PROJECT_DIR"
+          npm init -y
+          npm install @capacitor/core@6 @capacitor/android@6
+          npm install --save-dev @capacitor/cli@6
+
+      - name: Configure Android wrapper
+        working-directory: build-wrapper
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.abdellah.muslimday",
+            "appName": "Muslim Day",
+            "webDir": "www",
+            "server": {
+              "androidScheme": "https"
+            }
+          }
+          EOF
+
+          npx cap add android
+
+      - name: Build APK
+        working-directory: build-wrapper
+        run: |
+          npx cap sync android
+          cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
@@ -48,6 +85,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Muslim-Day-APK
-          path: '/build/outputs/apk//*.apk'
+          path: build-wrapper/android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 7
