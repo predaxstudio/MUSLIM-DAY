@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com https://apis.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://server.arcgisonline.com https://unpkg.com https://*.googleusercontent.com; connect-src 'self' https://apis.google.com https://api.aladhan.com https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://muslimappdaybypredaxstudio.netlify.app https://overpass.private.coffee https://lz4.overpass-api.de https://z.overpass-api.de https://server.arcgisonline.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://firestore.googleapis.com https://fcmregistrations.googleapis.com https://fcm.googleapis.com https://www.googleapis.com https://muslim-day-365.firebaseapp.com https://accounts.google.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com; media-src data: https://archive.org https://*.archive.org; frame-src https://www.google.com https://maps.google.com https://accounts.google.com https://apis.google.com https://content.googleapis.com https://muslim-day-365.firebaseapp.com https://muslim-day-365.web.app; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'self'; worker-src 'self'; manifest-src 'self';">
+<title id="pageTitle">Muslim Day — الصلاة والمساجد</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3A1470">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="application-name" content="Muslim Day">
+<meta name="apple-mobile-web-app-title" content="Muslim Day">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<script src="theme-init.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;800&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="notes.css">
+</head>
+<body>
+<div id="splash" aria-hidden="true">
+  <img class="sp-logo" src="icons/hero-logo.png" alt="" width="92" height="104">
+  <div class="sp-title">Muslim Day</div>
+  <div class="sp-by">By <b>Predax Studio</b></div>
+</div>
+<div id="adhanBar" class="adhan-bar" style="display:none;" role="alert">
+  <span id="adhanBarText"></span>
+  <button id="adhanBarStop" type="button">⏹ <span id="adhanBarStopTxt">إيقاف</span></button>
+</div>
+<div id="app">
+
+  <header class="top">
+    <div class="hero">
+      <div class="hero-text">
+        <h1 id="txtAppName" class="hero-title">Muslim Day</h1>
+        <p class="hero-greet" id="txtGreeting"><span class="greet-hi" id="greetHi"></span> <span class="greet-name" id="greetName"></span></p>
+      </div>
+      <div class="hero-logo" aria-hidden="true"><img src="icons/hero-logo.png" alt="" width="46" height="52"></div>
+    </div>
+    <div class="loc-pill" id="locPill">
+      <span class="dot" id="locDot"></span>
+      <span id="locText">اضغط لتحديد موقعك بدقة</span>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HOME -->
+    <section class="view active" id="view-home">
+
+      <div class="ios-install-banner" id="iosInstallBanner" style="display:none;">
+        <button class="ios-banner-close" id="iosInstallCloseBtn" type="button" aria-label="إغلاق">&times;</button>
+        <div class="ios-banner-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+        </div>
+        <div class="ios-banner-body">
+          <div class="ios-banner-title" id="txtIosInstallTitle">ثبّت التطبيق على شاشتك الرئيسية</div>
+          <div class="ios-banner-steps" id="txtIosInstallSteps">اضغط زر المشاركة أسفل الشاشة، ثم اختر "إضافة إلى الشاشة الرئيسية"</div>
+        </div>
+      </div>
+
+      <div class="card next-prayer" id="nextPrayerCard">
+        <div class="label" id="txtNextPrayerLabel">الصلاة القادمة</div>
+        <div class="name" id="npName">—</div>
+        <div class="countdown" id="npCountdown">حدّد موقعك أولاً</div>
+        <div class="hero-times-label"><span>🕋</span><span id="txtTimesTitle">أوقات اليوم</span></div>
+        <div class="times-grid" id="timesGrid">
+          <div class="time-cell"><div class="n">—</div><div class="t">—</div></div>
+          <div class="time-cell"><div class="n">—</div><div class="t">—</div></div>
+          <div class="time-cell"><div class="n">—</div><div class="t">—</div></div>
+          <div class="time-cell"><div class="n">—</div><div class="t">—</div></div>
+          <div class="time-cell"><div class="n">—</div><div class="t">—</div></div>
+        </div>
+      </div>
+
+      <button type="button" class="strip-card" id="openMuslimDayBtn">
+        <span class="strip-body">
+          <span class="strip-title" id="txtMdHomeTitle">🌙 يوم المسلم</span>
+          <span class="progress-bar mini"><span class="progress-fill" id="mdHomeProgressFill"></span></span>
+          <span class="strip-progress-text" id="mdHomeProgress">—</span>
+        </span>
+        <span class="strip-cta">
+          <span id="txtOpenMuslimDay">فتح</span>
+          <span class="chevron">›</span>
+        </span>
+      </button>
+
+      <div class="card compact">
+        <details id="extraTimesDetails">
+          <summary class="section-title-sm"><span>⏱️</span><span id="txtExtraTimesTitle">أوقات إضافية</span></summary>
+          <div class="times-grid extra" id="extraTimesGrid" style="margin-top:12px;">
+            <div class="time-cell"><div class="n" id="txtExtraSunrise">الشروق</div><div class="t" id="valSunrise">—</div></div>
+            <div class="time-cell"><div class="n" id="txtExtraImsak">الإمساك</div><div class="t" id="valImsak">—</div></div>
+            <div class="time-cell"><div class="n" id="txtExtraMidnight">منتصف الليل</div><div class="t" id="valMidnight">—</div></div>
+            <div class="time-cell"><div class="n" id="txtExtraLastThird">آخر ثلث الليل</div><div class="t" id="valLastThird">—</div></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="home-toggle">
+        <div>
+          <div class="toggle-title" id="txtNotifTitle">تنبيه الأذان</div>
+          <div class="toggle-desc" id="txtNotifDesc">إشعار وصوت أذان تلقائي عند دخول الوقت</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="notifToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="status-msg" id="txtNotifHint" style="text-align:start; padding:4px 4px 0;">لتحكم أدق بكل صلاة على حدة، افتح الإعدادات ⚙️</div>
+    </section>
+
+    <!-- MAP -->
+    <section class="view" id="view-map">
+      <h2 class="section-title"><span>🕌</span><span id="txtMosquesTitle">المساجد القريبة منك</span></h2>
+
+      <div class="chip-row" id="radiusRow">
+        <span class="chip-label" id="txtRadiusLabel">نطاق البحث</span>
+        <div class="chips" id="radiusChips"></div>
+      </div>
+
+      <div id="favMosqueBox" class="fav-mosque-box" style="display:none;">
+        <div class="fm-icon">⭐</div>
+        <div class="fm-body">
+          <div class="fm-title" id="txtFavMosqueTitle">مسجدي المفضل</div>
+          <div class="fm-name" id="favMosqueName">—</div>
+        </div>
+        <button class="ghost small" id="favMosqueGoBtn" type="button"><span id="txtFavMosqueOpen">فتح</span></button>
+      </div>
+
+      <div class="map-mode" id="mapModeRow">
+        <button class="map-mode-btn active" data-mode="fast" type="button"><span id="txtMapFast">خريطة سريعة</span></button>
+        <button class="map-mode-btn" data-mode="google" type="button"><span>Google Maps</span></button>
+      </div>
+      <div id="map"></div>
+      <div id="gmapWrap" style="display:none;"><iframe id="gmapFrame" title="Google Maps" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+      <div class="map-actions">
+        <button class="ghost" id="findMosquesBtn" type="button">تحديث البحث حول موقعي</button>
+        <button class="primary" id="openGmapsBtn" type="button">🗺️ <span id="txtOpenGmaps">فتح في Google Maps</span></button>
+      </div>
+      <div class="card" style="padding:6px 14px;">
+        <div id="mosqueList"><div class="status-msg" id="txtMosquesPrompt">حدّد موقعك لعرض أقرب المساجد</div></div>
+      </div>
+    </section>
+
+    <!-- MUSLIM DAY -->
+    <section class="view" id="view-muslimday">
+      <div class="md-header">
+        <div class="md-nav-day">
+          <button class="md-arrow" id="mdPrevDay" type="button" aria-label="prev">‹</button>
+          <div class="md-date-box">
+            <div class="md-title" id="txtMdTitle">🌙 يوم المسلم</div>
+            <div class="md-weekday" id="mdWeekday">—</div>
+            <div class="md-gregorian" id="mdGregorian">—</div>
+            <div class="md-hijri" id="mdHijri">—</div>
+          </div>
+          <button class="md-arrow" id="mdNextDay" type="button" aria-label="next">›</button>
+        </div>
+        <div class="md-header-actions">
+          <button class="ghost small" id="mdTodayBtn" type="button"><span id="txtMdBackToday">اليوم</span></button>
+          <button class="ghost small" id="mdMonthToggleBtn" type="button"><span id="txtMdMonthBtn">📅 هذا الشهر</span></button>
+          <button class="icon-btn small" id="mdCustomizeBtn" type="button" title="تخصيص" aria-label="تخصيص">⚙️</button>
+        </div>
+      </div>
+
+      <div class="card md-hijri-disclaimer" id="mdHijriDisclaimer">
+        قد يختلف التاريخ الهجري يومًا حسب رؤية الهلال والجهة المحلية.
+      </div>
+
+      <div class="card md-progress-card">
+        <div class="md-progress-text" id="mdProgressText">أنجزت 0 من 0 من الأعمال التي اخترتها اليوم.</div>
+        <div class="progress-bar"><div class="progress-fill" id="mdProgressFill"></div></div>
+      </div>
+
+      <!-- MONTHLY VIEW -->
+      <div class="card" id="mdMonthlyBox" style="display:none;">
+        <div class="month-nav">
+          <button class="md-arrow" id="mdPrevMonth" type="button" aria-label="prev month">‹</button>
+          <h3 class="section-title" style="font-size:16px; margin:0;"><span>📅</span><span id="txtMonthTitle">هذا الشهر</span></h3>
+          <button class="md-arrow" id="mdNextMonth" type="button" aria-label="next month">›</button>
+        </div>
+        <div class="month-grid" id="monthGrid"></div>
+        <div class="month-stats" id="monthStats"></div>
+      </div>
+
+      <!-- DAILY TASKS -->
+      <div id="mdTasksBox">
+        <div class="card md-section" id="secPrayers">
+          <h3 class="section-title" style="font-size:16px;"><span>🕌</span><span id="txtSecPrayers">الصلوات</span></h3>
+          <div id="prayerRows"></div>
+        </div>
+
+        <div class="card md-section" id="secNawafil">
+          <h3 class="section-title" style="font-size:16px;"><span>🕋</span><span id="txtSecNawafil">السنن والنوافل</span></h3>
+          <div id="nawafilRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secQuran">
+          <h3 class="section-title" style="font-size:16px;"><span>📖</span><span id="txtSecQuran">القرآن</span></h3>
+          <div id="quranRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secAzkar">
+          <h3 class="section-title" style="font-size:16px;"><span>🤲</span><span id="txtSecAzkar">الأذكار</span></h3>
+          <div id="azkarRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secNight">
+          <h3 class="section-title" style="font-size:16px;"><span>🌙</span><span id="txtSecNight">قيام الليل</span></h3>
+          <div id="nightRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secParents">
+          <h3 class="section-title" style="font-size:16px;"><span>❤️</span><span id="txtSecParents">بر الوالدين</span></h3>
+          <div id="parentsRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secLearning">
+          <h3 class="section-title" style="font-size:16px;"><span>📚</span><span id="txtSecLearning">طلب العلم</span></h3>
+          <div id="learningRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secCharity">
+          <h3 class="section-title" style="font-size:16px;"><span>🤲</span><span id="txtSecCharity">أعمال الخير</span></h3>
+          <div id="charityRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secCustom" style="display:none;">
+          <h3 class="section-title" style="font-size:16px;"><span>⭐</span><span id="txtSecCustom">أعمالي الخاصة</span></h3>
+          <div id="customRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secFasting" style="display:none;">
+          <h3 class="section-title" style="font-size:16px;"><span>🌙</span><span id="txtSecFasting">الصيام</span></h3>
+          <div class="status-msg" id="fastingReason" style="text-align:start; padding:0 0 8px;"></div>
+          <div id="fastingRows" class="task-list"></div>
+        </div>
+
+        <div class="card md-section" id="secFriday" style="display:none;">
+          <h3 class="section-title" style="font-size:16px;"><span>🕌</span><span id="txtSecFriday">أعمال يوم الجمعة</span></h3>
+          <div id="fridayRows" class="task-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AZKAR -->
+    <section class="view" id="view-azkar">
+      <h2 class="section-title"><span>📿</span><span id="txtAzkarTitle">الأذكار</span></h2>
+      <div class="az-cats" id="azkarCats" role="tablist"></div>
+      <div class="card az-progress-card">
+        <div class="md-progress-text" id="azkarProgressText">—</div>
+        <div class="progress-bar"><div class="progress-fill" id="azkarProgressFill"></div></div>
+      </div>
+      <div id="azkarList"></div>
+      <div class="az-footnote" id="azkarFootnote"></div>
+    </section>
+
+    <!-- NOTES (يُبنى محتواه من notes.js) -->
+    <section class="view" id="view-notes"></section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="view-settings">
+      <h2 class="section-title"><span>⚙️</span><span id="txtSettingsTitle">الإعدادات</span></h2>
+
+      <div class="card md-section">
+        <h3 class="settings-sec-title" id="txtSecSettingsAccount">الحساب</h3>
+        <div id="accountSignedOut">
+          <div class="status-msg" id="txtAccountSignedOutPrompt" style="text-align:start; padding:2px 0 12px;">لست مسجّلاً الدخول حاليًا.</div>
+          <button type="button" class="primary" id="openAuthGateBtn"><span id="txtOpenAuthGate">تسجيل الدخول</span></button>
+        </div>
+        <div id="accountSignedIn" class="account-row" style="display:none;">
+          <img id="accountAvatar" class="account-avatar" src="" alt="">
+          <div class="account-info">
+            <div class="account-name" id="accountName">—</div>
+            <div class="account-email" id="accountEmail">—</div>
+          </div>
+          <button class="ghost small" id="editAccountBtn" type="button" aria-label="تعديل الحساب">✏️</button>
+          <button class="ghost small" id="googleSignOutBtn" type="button"><span id="txtSignOut">تسجيل الخروج</span></button>
+        </div>
+      </div>
+
+      <div class="card md-section">
+        <h3 class="settings-sec-title" id="txtSecSettingsLang">اللغة</h3>
+        <div class="theme-current-row">
+          <div class="theme-current-info">
+            <div class="lang-current-flag" id="langCurrentFlag">🇸🇦</div>
+            <div class="theme-current-name" id="langCurrentName">العربية</div>
+          </div>
+          <button class="ghost small" id="toggleLangGridBtn" type="button"><span>تغيير اللغة</span></button>
+        </div>
+        <div class="lang-grid" id="langList" style="display:none;"></div>
+      </div>
+
+      <div class="card md-section">
+        <h3 class="settings-sec-title" id="txtSecSettingsThemes">المظهر والثيمات</h3>
+        <div class="theme-current-row">
+          <div class="theme-current-info">
+            <div class="theme-current-swatch" id="themeCurrentSwatch"></div>
+            <div class="theme-current-name" id="themeCurrentName">—</div>
+          </div>
+          <button class="ghost small" id="toggleThemeGridBtn" type="button"><span id="txtChangeTheme">تغيير الثيم</span></button>
+        </div>
+        <div class="theme-grid" id="themeGrid" style="display:none;"></div>
+        <button class="primary" id="installAppBtn" style="display:none; margin-top:16px;" type="button">
+          <span id="txtInstallApp">تثبيت التطبيق على جهازك</span>
+        </button>
+      </div>
+
+      <div class="card md-section">
+        <h3 class="settings-sec-title" id="txtSecSettingsPrayer">مواقيت الصلاة</h3>
+        <div class="settings-row">
+          <label id="txtCalcMethod">طريقة الحساب</label>
+          <select id="calcMethodSelect"></select>
+        </div>
+        <div class="settings-row">
+          <label id="txtAsrMadhhab">مذهب العصر</label>
+          <select id="asrSelect">
+            <option value="0" id="optShafi">شافعي</option>
+            <option value="0" id="optMaliki">مالكي</option>
+            <option value="0" id="optHanbali">حنبلي</option>
+            <option value="1" id="optHanafi">حنفي</option>
+          </select>
+        </div>
+        <div class="status-msg" id="txtAsrNote" style="text-align:start; padding:0 0 8px;">فلكيًا، مواقيت العصر عند الشافعي والمالكي والحنبلي متطابقة (يبدأ الوقت حين يصير ظل الشيء مثله)، بينما يتأخر وقته عند الحنفي (حين يصير الظل مثليه). لذلك تُحسب هذه المذاهب الثلاثة بنفس الطريقة في التطبيق.</div>
+        <div class="settings-sub-title" id="txtAdjustTimes">تعديل المواقيت (بالدقائق)</div>
+        <div id="tuneRows"></div>
+      </div>
+
+      <div class="card md-section">
+        <h3 class="settings-sec-title" id="txtSecSettingsAdhan">الأذان والتنبيهات</h3>
+        <div id="perPrayerNotifRows"></div>
+        <div class="settings-sub-title"><span>🔊</span> <span id="txtSoundTitle">صوت الأذان</span></div>
+        <div class="theme-current-row sound-current-row">
+          <div class="theme-current-info">
+            <div class="sound-current-icon">🔊</div>
+            <div><div class="theme-current-name" id="soundCurrentName">—</div></div>
+          </div>
+          <button class="ghost small" id="openSoundBtn" type="button"><span id="txtChooseSound">اختيار الصوت</span></button>
+        </div>
+        <div class="settings-row">
+          <label id="txtReminderBefore">التذكير قبل الصلاة</label>
+          <select id="reminderMinutesSelect">
+            <option value="0" id="optRemOff">إيقاف</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card md-section">
+        <h3 class="settings-sec-title" id="txtSecSettingsLocation">الموقع</h3>
+        <div class="city-search-row">
+          <input type="search" id="cityQuery" class="auth-input" autocomplete="off" placeholder="ابحث عن مدينة">
+          <button class="ghost small" id="citySearchBtn" type="button"><span data-pk="citySearchBtn">بحث</span></button>
+        </div>
+        <div id="cityResults" class="city-results"></div>
+        <button class="ghost" id="gpsRefreshBtn" style="width:100%; margin:10px 0;" type="button"><span id="txtUseGps">تحديث عبر GPS</span></button>
+        <div class="settings-sub-title" id="txtManualCoords">إدخال إحداثيات يدويًا</div>
+        <div class="manual-coords-row">
+          <input type="number" step="0.0001" id="manualLat" placeholder="Lat">
+          <input type="number" step="0.0001" id="manualLng" placeholder="Lng">
+          <button class="ghost small" id="manualCoordsBtn" type="button"><span id="txtSave">حفظ</span></button>
+        </div>
+        <div class="status-msg" id="txtGeocodeNote" style="text-align:start; padding-top:8px;">البحث بالاسم عن مدينة يتطلب خدمة بحث جغرافي خارجية غير مضافة حاليًا لحماية الخصوصية (CSP). استخدم GPS أو أدخل الإحداثيات يدويًا.</div>
+      </div>
+
+      <div class="card md-section">
+        <h3 class="settings-sec-title" id="txtSecSettingsMuslimDay">يوم المسلم</h3>
+        <button class="ghost" id="editTrackedBtn" style="width:100%; margin-bottom:10px;" type="button"><span id="txtEditTracked">الأعمال المتابَعة</span></button>
+        <button class="ghost" id="resetTodayBtn" style="width:100%; margin-bottom:10px;" type="button"><span id="txtResetToday">إعادة ضبط بيانات اليوم</span></button>
+        <button class="ghost danger" id="clearHistoryBtn" style="width:100%;" type="button"><span id="txtClearHistory">مسح السجل بالكامل</span></button>
+      </div>
+
+      <div class="card visitors-card" id="visitorsCard" style="display:none;">
+        <div class="visitors-label" id="txtVisitorsLabel">عدد زوار التطبيق</div>
+        <div class="visitors-count" id="visitorsCount" aria-live="polite">—</div>
+      </div>
+
+      <a class="studio-link" href="https://predaxstudio.github.io/SITE/" target="_blank" rel="noopener noreferrer">By Predax Studio <span aria-hidden="true">↗</span></a>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <span class="tab-indicator" aria-hidden="true"></span>
+    <button class="active" data-view="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      <span id="txtNavHome">الرئيسية</span>
+    </button>
+    <button data-view="map">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      <span id="txtNavMosques">المساجد</span>
+    </button>
+    <button data-view="muslimday">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <span id="txtNavMuslimDay">يوم المسلم</span>
+    </button>
+    <button data-view="azkar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="4" r="1.6"/><circle cx="18" cy="7.2" r="1.6"/><circle cx="19.2" cy="14" r="1.6"/><circle cx="14.6" cy="19.2" r="1.6"/><circle cx="9.4" cy="19.2" r="1.6"/><circle cx="4.8" cy="14" r="1.6"/><circle cx="6" cy="7.2" r="1.6"/></svg>
+      <span id="txtNavAzkar">ذكر</span>
+    </button>
+    <button data-view="notes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+      <span id="txtNavNotes">ملاحظات</span>
+    </button>
+    <button data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span id="txtNavSettings">الإعدادات</span>
+    </button>
+  </nav>
+</div>
+
+<audio id="adhanAudio" preload="none"></audio>
+
+<div class="lang-sheet-overlay" id="soundOverlay">
+  <div class="lang-sheet sound-sheet">
+    <h3 id="txtSoundSheetTitle">صوت الأذان</h3>
+    <div id="soundList" class="sound-list"></div>
+    <button class="primary" id="soundDoneBtn" style="margin:12px 16px 4px; width:calc(100% - 32px);" type="button"><span id="txtSoundDone">تم</span></button>
+  </div>
+</div>
+
+<div class="lang-sheet-overlay" id="customizeOverlay">
+  <div class="lang-sheet customize-sheet">
+    <h3 id="txtCustomizeTitle">اختر ما تريد متابعته</h3>
+    <div id="customizeList" class="customize-list"></div>
+    <button class="primary" id="customizeSaveBtn" style="margin:12px 16px; width:calc(100% - 32px);" type="button"><span id="txtCustomizeSave">حفظ</span></button>
+  </div>
+</div>
+
+<div class="lang-sheet-overlay" id="mosqueDetailOverlay">
+  <div class="lang-sheet mosque-detail-sheet">
+    <div id="mosqueDetailBody"></div>
+  </div>
+</div>
+
+<!-- تأكيد كلمة المرور قبل تعديل الحساب -->
+<div class="auth-gate-overlay" id="reauthOverlay" style="z-index:230;">
+  <div class="auth-gate-card">
+    <div class="auth-gate-title" data-pk="pfReauthTitle">تأكيد هويتك</div>
+    <p class="auth-gate-subtitle" id="reauthDesc"></p>
+    <form class="auth-form" onsubmit="return false;" novalidate>
+      <input type="password" id="reauthPassword" class="auth-input" autocomplete="current-password" placeholder="كلمة المرور">
+      <div class="auth-error" id="reauthError" style="display:none;"></div>
+      <button type="button" class="primary" id="reauthConfirmBtn"><span data-pk="pfConfirm">تأكيد</span></button>
+      <div class="auth-gate-guest"><button type="button" class="link-btn" id="reauthCancelBtn" data-pk="pfCancel">إلغاء</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- تغيير كلمة المرور -->
+<div class="auth-gate-overlay" id="pwOverlay" style="z-index:240;">
+  <div class="auth-gate-card">
+    <div class="auth-gate-title" data-pk="pwChange">تغيير كلمة المرور</div>
+    <form class="auth-form" onsubmit="return false;" novalidate>
+      <input type="password" id="pwCurrent" class="auth-input" autocomplete="current-password" placeholder="كلمة المرور الحالية">
+      <input type="password" id="pwNew" class="auth-input" autocomplete="new-password" minlength="6" placeholder="كلمة المرور الجديدة">
+      <input type="password" id="pwConfirm" class="auth-input" autocomplete="new-password" minlength="6" placeholder="تأكيد كلمة المرور الجديدة">
+      <div class="auth-gate-guest" style="margin:0; text-align:start;"><button type="button" class="link-btn" id="pwToggleShow" data-pk="pwShow">إظهار كلمات المرور</button></div>
+      <div class="auth-error" id="pwError" style="display:none;"></div>
+      <div class="auth-success" id="pwSuccess" style="display:none;"></div>
+      <button type="button" class="primary" id="pwSaveBtn"><span data-pk="pwSave">تحديث كلمة المرور</span></button>
+      <div class="auth-gate-guest"><button type="button" class="link-btn" id="pwCancelBtn" data-pk="pfCancel">إلغاء</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- تعديل الحساب: الاسم + صورة الحساب -->
+<div class="auth-gate-overlay" id="profileOverlay" style="z-index:220;">
+  <div class="auth-gate-card">
+    <div class="auth-gate-title" data-pk="pfTitle">تعديل الحساب</div>
+    <div class="profile-avatar-wrap"><img id="profileAvatarPreview" class="profile-avatar-big" src="" alt=""></div>
+    <div class="profile-pick-row">
+      <button type="button" class="ghost small" id="pickCameraBtn">📷 <span data-pk="pfCamera">كاميرا</span></button>
+      <button type="button" class="ghost small" id="pickGalleryBtn">🖼️ <span data-pk="pfGallery">المعرض</span></button>
+      <button type="button" class="ghost small" id="pickFilesBtn">📁 <span data-pk="pfFiles">الملفات</span></button>
+    </div>
+    <div class="auth-gate-guest" style="margin:4px 0 12px;"><button type="button" class="link-btn" id="removeAvatarBtn" data-pk="pfRemove">حذف الصورة</button></div>
+    <input type="file" id="avatarCameraInput" accept="image/*" capture="user" hidden>
+    <input type="file" id="avatarGalleryInput" accept="image/*" hidden>
+    <input type="file" id="avatarFilesInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+    <form class="auth-form" onsubmit="return false;" novalidate>
+      <input type="text" id="profileNameInput" class="auth-input" maxlength="60" autocomplete="name" placeholder="الاسم">
+      <div class="auth-error" id="profileError" style="display:none;"></div>
+      <button type="button" class="primary" id="profileSaveBtn"><span data-pk="pfSave">حفظ التغييرات</span></button>
+      <button type="button" class="ghost" id="openPwBtn" style="display:none;">🔑 <span data-pk="pwChange">تغيير كلمة المرور</span></button>
+      <div class="status-msg" id="pwGoogleNote" data-pk="pwGoogleNote" style="display:none; text-align:start; padding:0;"></div>
+      <div class="auth-gate-guest"><button type="button" class="link-btn" id="profileCancelBtn" data-pk="pfCancel">إلغاء</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="auth-gate-overlay" id="authGateOverlay">
+  <div class="auth-gate-card">
+    <div class="auth-gate-logo">
+      <img src="icons/app-logo.png" alt="Muslim Day" width="220" height="175">
+      <div class="auth-gate-title" id="txtGateTitle">مرحبًا بك في Muslim Day</div>
+      <div class="auth-gate-subtitle" id="txtGateSubtitle">سجّل الدخول لحفظ إعداداتك واستخدام نفس حسابك لاحقًا على أجهزة أخرى</div>
+    </div>
+
+    <div class="auth-gate-loading" id="gateLoading">
+      <span id="txtGateLoading">جارٍ التحقق من حسابك...</span>
+    </div>
+
+    <div id="gateAuthBody" style="display:none;">
+
+      <form id="gateAuthForm" class="auth-form" novalidate>
+        <input type="text" id="gateName" class="auth-input" placeholder="اسمك" autocomplete="name" style="display:none;">
+        <input type="email" id="gateEmail" class="auth-input" placeholder="البريد الإلكتروني" autocomplete="email" required>
+        <input type="password" id="gatePassword" class="auth-input" placeholder="كلمة المرور" autocomplete="current-password" minlength="6" required>
+        <div class="auth-error" id="gateAuthError" style="display:none;"></div>
+        <div class="auth-success" id="gateAuthSuccess" style="display:none;"></div>
+        <button type="submit" class="primary" id="gateAuthSubmitBtn"><span id="txtGateAuthSubmit">تسجيل الدخول</span></button>
+        <div class="auth-links">
+          <button type="button" class="link-btn" id="gateAuthToggleModeBtn"><span id="txtGateAuthToggleMode">ليس لديك حساب؟ أنشئ حسابًا جديدًا</span></button>
+          <button type="button" class="link-btn" id="gateAuthForgotBtn"><span id="txtGateAuthForgot">نسيت كلمة المرور؟</span></button>
+        </div>
+      </form>
+
+      <div class="auth-gate-guest">
+        <button type="button" class="link-btn" id="gateGuestBtn"><span id="txtGateGuest">المتابعة بدون حساب الآن</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="firebase-init.js"></script>
+<script src="azkar-data.js"></script>
+<script src="version.js"></script>
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+<script src="features.js"></script>
+<script src="features2.js"></script>
+<script src="features3.js"></script>
+<script src="quiet.js"></script>
+<script src="features4.js"></script>
+<script src="native.js"></script>
+<script src="notes.js"></script>
+<!-- للتثبيت الفعلي على أندرويد وويندوز: استضف هذا المجلد كاملاً (index.html + style.css + script.js + theme-init.js + firebase-init.js + manifest.json + sw.js + icons/) على خادم HTTPS (GitHub Pages / Netlify / Vercel)، ثم افتحه من Chrome أو Edge واضغط زر "تثبيت التطبيق" داخل الإعدادات. نفس ملف firebase-init.js يمكن تغليفه لاحقًا داخل تطبيق Android (WebView/Capacitor/Trusted Web Activity) أو Windows (WebView2) دون أي إعادة بناء لواجهة التطبيق. -->
+</body>
+</html>

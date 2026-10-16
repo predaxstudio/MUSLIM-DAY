@@ -1,0 +1,43 @@
+{
+  "id": "./index.html",
+  "name": "Muslim Day — أوقات الصلاة والمساجد",
+  "short_name": "Muslim Day",
+  "description": "أوقات الصلاة، أقرب المساجد، الأذان، ويوم المسلم — بعدة ثيمات لونية.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#040A1C",
+  "theme_color": "#3A1470",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "categories": [
+    "lifestyle",
+    "utilities"
+  ],
+  "prefer_related_applications": false
+}
