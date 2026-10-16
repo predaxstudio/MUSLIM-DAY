@@ -11,11 +11,11 @@ permissions:
 
 jobs:
   build:
-    name: Build Android APK
+    name: Build Muslim Day APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout project
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -29,52 +29,42 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Prepare web application
+      - name: Prepare website files
         shell: bash
         run: |
           set -e
-          mkdir -p build-wrapper/www
+          mkdir -p wrapper/www
 
-          rsync -a ./ build-wrapper/www/ \
+          rsync -a \
             --exclude='.git/' \
             --exclude='.github/' \
             --exclude='node_modules/' \
-            --exclude='build-wrapper/' \
+            --exclude='wrapper/' \
             --exclude='android/' \
-            --exclude='dist/' \
-            --exclude='package.json' \
-            --exclude='package-lock.json'
+            --exclude='build/' \
+            ./ wrapper/www/
 
-          if [ ! -f build-wrapper/www/index.html ]; then
-            echo "ERROR: index.html was not found."
-            exit 1
-          fi
+          test -f wrapper/www/index.html
 
-      - name: Install Capacitor
-        working-directory: build-wrapper
+      - name: Create Android project
+        working-directory: wrapper
         run: |
           npm init -y
           npm install @capacitor/core@6 @capacitor/android@6
           npm install --save-dev @capacitor/cli@6
 
-      - name: Configure Android wrapper
-        working-directory: build-wrapper
-        run: |
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "com.abdellah.muslimday",
             "appName": "Muslim Day",
-            "webDir": "www",
-            "server": {
-              "androidScheme": "https"
-            }
+            "webDir": "www"
           }
           EOF
 
           npx cap add android
 
       - name: Build APK
-        working-directory: build-wrapper
+        working-directory: wrapper
         run: |
           npx cap sync android
           cd android
@@ -85,6 +75,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Muslim-Day-APK
-          path: build-wrapper/android/app/build/outputs/apk/debug/*.apk
+          path: wrapper/android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 7
