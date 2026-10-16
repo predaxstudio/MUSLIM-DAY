@@ -2,7 +2,7 @@
   "_help": "Edit the values below. Keys starting with _ are ignored. Delete any key you don't need - defaults are used.",
 
   "_appName": "Name shown under the app icon",
-  "appName": "My App",
+  "appName": "MUSLIM DAY",
 
   "_appId": "Unique Android package name, e.g. com.mycompany.myapp (change it for every different app)",
   "appId": "com.mycompany.myapp",
