@@ -1,7 +1,13 @@
-name: Build Android APK
+name: Build Muslim Day APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -11,9 +17,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build web app APK
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Capacitor
         run: |
-          mkdir -p output
-          echo "Web app files found:"
-          ls -la
-          echo "This workflow checks the project files."
+          mkdir -p /tmp/muslimday-build
+          cd /tmp/muslimday-build
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: Prepare web assets
+        run: |
+          mkdir -p www
+          cp index.html www/
+          cp -n *.js www/ || true
+          cp -n *.css www/ || true
+          cp -n *.json www/ || true
+          cp -rn assets www/assets 2>/dev/null || true
+
+      - name: Build Android project
+        run: |
+          echo "Web assets prepared"
+          echo "Android project configuration is still required"
