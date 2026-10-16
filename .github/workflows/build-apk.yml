@@ -1,4 +1,4 @@
-name: Build Muslim Day APK
+name: Build APK
 
 on:
   workflow_dispatch:
@@ -11,34 +11,43 @@ permissions:
 
 jobs:
   build:
+    name: Build Android APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Get project files
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Install Java
+        uses: actions/setup-java@v4
         with:
-          node-version: 20
+          distribution: temurin
+          java-version: '17'
 
-      - name: Install Capacitor
+      - name: Find Android project
+        shell: bash
         run: |
-          mkdir -p /tmp/muslimday-build
-          cd /tmp/muslimday-build
-          npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          if [ -f "gradlew" ]; then
+            echo "PROJECT_DIR=." >> "$GITHUB_ENV"
+          elif [ -f "android/gradlew" ]; then
+            echo "PROJECT_DIR=android" >> "$GITHUB_ENV"
+          else
+            echo "ERROR: Android Gradle project not found."
+            echo "A web-only project needs Android setup first."
+            exit 1
+          fi
 
-      - name: Prepare web assets
+      - name: Build Debug APK
+        shell: bash
         run: |
-          mkdir -p www
-          cp index.html www/
-          cp -n *.js www/ || true
-          cp -n *.css www/ || true
-          cp -n *.json www/ || true
-          cp -rn assets www/assets 2>/dev/null || true
+          cd "$PROJECT_DIR"
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-      - name: Build Android project
-        run: |
-          echo "Web assets prepared"
-          echo "Android project configuration is still required"
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Muslim-Day-APK
+          path: '/build/outputs/apk//*.apk'
+          if-no-files-found: error
+          retention-days: 7
